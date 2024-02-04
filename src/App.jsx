@@ -6,7 +6,7 @@ const App = () => {
   const [cardDetails, setCardDetails] = useState("");
   // New state to track the version of the card marked as Baseline and Final
   const [baselineVersion, setBaselineVersion] = useState(null);
-  const [finalVersion, setFinalVersion] = useState(null);
+  // const [finalVersion, setFinalVersion] = useState(null);
 
   const addCard = () => {
     if (!cardDetails.trim()) {
@@ -33,7 +33,7 @@ const App = () => {
 
   const markBaselineAndGenerateFinal = () => {
     setCards((prevCards) => {
-      const baselineIndex = prevCards.length; 
+      const baselineIndex = prevCards.length;
       const baselineCard = prevCards[baselineIndex - 1] || null;
 
       let newCards = prevCards.map((card, index) => ({
@@ -44,13 +44,13 @@ const App = () => {
       if (baselineCard) {
         newCards[baselineIndex - 1] = { ...baselineCard, status: "Baseline" }; // Mark the last card as Baseline
         setBaselineVersion(baselineCard.version);
-        setFinalVersion(cards.length - 1); // Next card will be final
+        // setFinalVersion(cards.length - 1); // Next card will be final
 
         const newFinalCard = {
           ...baselineCard,
           id: baselineCard.id + 1,
           version: baselineCard.version + 1,
-          status: "Final",
+          status: "Final"
         };
 
         return [...newCards, newFinalCard];
@@ -62,12 +62,14 @@ const App = () => {
 
   // Dynamically determine the status of each card when rendering
   const getCardStatus = (card) => {
-    console.log(cards.length-1);
-    if (baselineVersion && (card.version === cards.length - 1)) {setFinalVersion(cards.length-1);return "Final";}
+    console.log(cards.length - 1);
+    
+
     if (card.version === baselineVersion) return "Baseline";
+    if (baselineVersion && card.version === cards.length) return "Final";
     if (card.version < baselineVersion || baselineVersion === null)
       return "Draft";
-    return card.status; // This will be "" for cards between baseline and final
+    return ""; // This will be "" for cards between baseline and final
   };
 
   return (
@@ -86,6 +88,7 @@ const App = () => {
       </div>
       {cards.map((card) => (
         <div key={card.id} className="card">
+      
           <Card card={{ ...card, status: getCardStatus(card) }} />
         </div>
       ))}
